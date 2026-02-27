@@ -2,9 +2,9 @@
 
 Das leere Gerüst um eine App aufzubauen.
 
-## Autoren
+## Autor
 
-Sophie von Felten (vonfesop@students.zhaw.ch)
-Lorna Skrnjug (skrnjlor@students.zhaw.ch)
+Samuel Wehrli (wehs@zhaw.ch)
+
 
 
