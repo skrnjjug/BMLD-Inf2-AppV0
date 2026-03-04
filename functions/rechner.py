@@ -3,8 +3,8 @@
 def konvertiere_laenge(wert, von, nach):
     """Länge in eine andere Einheit umrechnen.
 
-    Akzeptierte Einheiten: Millimeter (mm), Zentimeter (cm),
-    Meter (m), Kilometer (km). Groß-/Kleinschreibung wird ignoriert.
+    Akzeptierte Einheiten: Millimeter [mm], Zentimeter [cm],
+    Meter [m], Kilometer [km]. Groß-/Kleinschreibung wird ignoriert.
     """
     to_meter = {
         "millimeter": 0.001, "mm": 0.001,
@@ -23,8 +23,8 @@ def konvertiere_laenge(wert, von, nach):
 def konvertiere_gewicht(wert, von, nach):
     """Gewicht in eine andere Einheit umrechnen.
 
-    Akzeptierte Einheiten: Milligramm (mg), Gramm (g), Kilogramm (kg),
-    Tonne (t), Pfund (lb). Groß-/Kleinschreibung wird ignoriert.
+    Akzeptierte Einheiten: Milligramm [mg], Gramm [g], Kilogramm [kg],
+    Tonne [t], Pfund [lb]. Groß-/Kleinschreibung wird ignoriert.
     """
     to_gram = {
         "milligramm": 0.001, "mg": 0.001,
