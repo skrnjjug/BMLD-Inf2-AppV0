@@ -5,19 +5,14 @@ from functions.rechner import (
     konvertiere_temperatur,
 )
 
-# ------- etwas CSS für die Farbe hinterlegen -------
-st.markdown(
-    """
-    <style>
-    .title {text-align: center; color: teal;}
-    .container {background-color: #f0f4f8; padding: 1rem; border-radius: 8px;}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+LAENGEN = ["m", "cm", "km"]
+GEWICHT = ["kg", "g", "lb"]
+TEMPERATUREN = ["°C", "°F", "K"]
 
-st.markdown("<h1 class='title'>🔄 Think smarter, not harder</h1>", unsafe_allow_html=True)
-st.write("Kleine Prävention für das Laborpraktikum: Damit nicht erst beim 30. Schritt auffällt, dass man einen Umrechnungsfehler gemacht hat.")
+# ... CSS und Überschrift wie gehabt ...
+
+st.markdown('<h1 class="title">Think smarter, not harder</h1>', unsafe_allow_html=True)
+st.write("Kleine Präventation für das Laborpraktikum: Damit nicht erst beim 30. Schritt auffällt, dass man einen Umrechnungsfehler gemacht hat")
 st.markdown("---")
 
 with st.container():
@@ -32,28 +27,34 @@ with st.container():
         wert = st.number_input("Wert", value=0.0, step=0.01, format="%.2f")
 
         if kategorie.startswith("🔧"):
-            von = st.selectbox("von", ["m", "cm", "km"])
-            nach = st.selectbox("nach", ["m", "cm", "km"])
+            von = st.selectbox("von", LAENGEN)
+            nach = st.selectbox("nach", LAENGEN)
         elif kategorie.startswith("⚖️"):
-            von = st.selectbox("von", ["kg", "g", "lb"])
-            nach = st.selectbox("nach", ["kg", "g", "lb"])
-        else:  # Temperatur
-            von = st.selectbox("von", ["°C", "°F", "K"])
-            nach = st.selectbox("nach", ["°C", "°F", "K"])
+            von = st.selectbox("von", GEWICHT)
+            nach = st.selectbox("nach", GEWICHT)
+        else:
+            von = st.selectbox("von", TEMPERATUREN)
+            nach = st.selectbox("nach", TEMPERATUREN)
 
         umrechnen = st.button("🎯 Umrechnen", key="convert")
 
     with col2:
         if umrechnen:
-            if kategorie.startswith("🔧"):
-                ergebnis = konvertiere_laenge(wert, von, nach)
-            elif kategorie.startswith("⚖️"):
-                ergebnis = konvertiere_gewicht(wert, von, nach)
-            else:
-                ergebnis = konvertiere_temperatur(wert, von, nach)
+            try:
+                if kategorie.startswith("🔧"):
+                    ergebnis = konvertiere_laenge(wert, von, nach)
+                elif kategorie.startswith("⚖️"):
+                    ergebnis = konvertiere_gewicht(wert, von, nach)
+                else:
+                    ergebnis = konvertiere_temperatur(wert, von, nach)
 
-            st.success(f"✅ {wert} {von} = **{ergebnis} {nach}**")
-            st.balloons()
+                st.success(f"✅ {wert} {von} = **{ergebnis} {nach}**")
+                if kategorie.startswith("🌡️") and 20 <= ergebnis <= 30:
+                    st.balloons()
+                    st.info("🍹 Aperol Spritz Wetter!")
+            except ValueError as err:
+                st.error(err)
+
 
 st.markdown("---")
 st.caption("Erstellt mit Streamlit – einfach, schnell und hübsch 😊")
