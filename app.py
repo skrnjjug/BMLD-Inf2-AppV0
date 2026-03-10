@@ -1,7 +1,7 @@
 import streamlit as st
 
-username = st.secrets["webdav.username"]
-password = st.secrets["webdav.password"]
+username = st.secrets["webdav"] ["username"]
+password = st.secrets["webdav"] ["password"]
 
 st.write(f"Username: {username}")
 st.write(f"Password: {password}")
