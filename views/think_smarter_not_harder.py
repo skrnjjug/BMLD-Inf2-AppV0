@@ -93,3 +93,17 @@ with st.container():
 st.markdown("---")
 st.caption("Erstellt mit Streamlit – einfach, schnell und hübsch 😊")
 st.dataframe(st.session_state['data_df'])
+
+import plotly.express as px
+
+df = st.session_state['data_df']
+
+einheit = result["Einheit"]   # <- das ist entscheidend!
+
+df_filtered = df[df["Einheit"] == einheit]
+
+if not df_filtered.empty:
+    fig = px.line(df_filtered, x="Datum", y="Wert", title=einheit)
+    st.plotly_chart(fig)
+else:
+    st.write("Keine Daten vorhanden")
