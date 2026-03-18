@@ -57,7 +57,7 @@ pg_home = st.Page(
 )
 
 pg_second = st.Page(
-    "views/think smarter not harder.py",
+    "views/think_smarter_not_harder.py",
     title="Think Smarter",
     icon=":material/lightbulb:"
 )
