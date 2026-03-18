@@ -40,6 +40,19 @@ data_manager = DataManager(
 login_manager = LoginManager(data_manager)
 login_manager.login_register()
 
+# --- Secrets prüfen (Username/Passwort müssen gesetzt sein) ---
+creds = st.secrets.get("credentials", {})
+if not creds.get("username") or not creds.get("password"):
+    st.error(
+        "Bitte `secrets.toml` anlegen / in Streamlit Cloud unter "
+        "Manage app → Secrets die Felder `credentials.username` und "
+        "`credentials.password` setzen."
+    )
+else:
+    # --- LoginManager initialisieren ---
+    login_manager = LoginManager(data_manager)
+    login_manager.login_register()
+
 # --- Nutzerdaten laden und in session_state speichern ---
 if 'data_df' not in st.session_state:
     st.session_state['data_df'] = data_manager.load_user_data(
