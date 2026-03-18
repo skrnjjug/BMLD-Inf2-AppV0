@@ -98,11 +98,11 @@ import plotly.express as px
 
 df = st.session_state['data_df']
 
-einheit = result["Einheit"]   # <- das ist entscheidend!
+if not df.empty:
+    einheit = df.iloc[-1]["Einheit"]  # ← DAS ist der Fix
 
-df_filtered = df[df["Einheit"] == einheit]
+    df_filtered = df[df["Einheit"] == einheit]
 
-if not df_filtered.empty:
     fig = px.line(df_filtered, x="Datum", y="Wert", title=einheit)
     st.plotly_chart(fig)
 else:
