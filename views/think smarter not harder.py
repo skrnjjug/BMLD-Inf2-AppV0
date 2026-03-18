@@ -7,6 +7,7 @@ from functions.rechner import (
     konvertiere_gewicht,
     konvertiere_temperatur,
 )
+from utils.data_manager import DataManager
 
 # --- Einheitendefinitionen ---
 LAENGEN = ["m", "cm", "km"]
@@ -81,6 +82,9 @@ with st.container():
                     [st.session_state['data_df'], pd.DataFrame([result])],
                     ignore_index=True
                 )
+
+                data_manager = DataManager()
+                data_manager.save_user_data(st.session_state['data_df'], 'data.csv')
 
             except ValueError as err:
                 st.error(err)
