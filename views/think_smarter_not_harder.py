@@ -69,7 +69,7 @@ with st.container():
                     st.balloons()
                     st.info("🍹 Aperol Spritz Wetter!")
 
-                # --- Dictionary erstellen (KONSISTENT BENANNT) ---
+                # --- Daten speichern ---
                 result = {
                     "timestamp": datetime.datetime.now(pytz.timezone('Europe/Zurich')),
                     "wert": wert,
@@ -79,20 +79,18 @@ with st.container():
                     "kategorie": kategorie,
                 }
 
-                # --- DataFrame aktualisieren ---
                 st.session_state['data_df'] = pd.concat(
                     [st.session_state['data_df'], pd.DataFrame([result])],
                     ignore_index=True
                 )
 
-                # --- Speichern ---
                 data_manager = DataManager()
                 data_manager.save_user_data(st.session_state['data_df'], 'data.csv')
 
             except ValueError as err:
                 st.error(err)
 
-# --- Historie-Tabelle anzeigen ---
+# --- Historie ---
 st.markdown("---")
 st.caption("Erstellt mit Streamlit – einfach, schnell und hübsch 😊")
 st.dataframe(st.session_state['data_df'])
@@ -101,20 +99,44 @@ st.dataframe(st.session_state['data_df'])
 df = st.session_state['data_df']
 
 if not df.empty:
-    # letzte verwendete Ziel-Einheit
-    einheit = df.iloc[-1]["nach"]
 
-    # nach Einheit filtern
-    df_filtered = df[df["nach"] == einheit]
+    # 🔒 FIX: Kategorien fest definieren (nicht frei editierbar)
+    FIXED_KATEGORIEN = ["🔧 Länge", "⚖️ Gewicht", "🌡️ Temperatur"]
 
-    fig = px.line(
-        df_filtered,
-        x="timestamp",
-        y="wert",
-        title=f"Verlauf in {einheit}"
+    selected_kategorie = st.selectbox(
+        "📊 Kategorie für Verlauf wählen",
+        FIXED_KATEGORIEN
     )
 
-    st.plotly_chart(fig)
+    df_filtered = df[df["kategorie"] == selected_kategorie].copy()
+
+    if not df_filtered.empty:
+
+        df_filtered = df_filtered.sort_values("timestamp")
+
+        # 🔥 WICHTIG: Wir plotten das ERGEBNIS (nicht Input!)
+        fig = px.scatter(
+            df_filtered,
+            x="timestamp",
+            y="ergebnis",
+            color="nach",
+            title=f"Umrechnungsverlauf für {selected_kategorie}",
+            hover_data=["wert", "von", "ergebnis", "nach"],
+        )
+
+        # 👉 optional: Linie hinzufügen für bessere Lesbarkeit
+        fig.update_traces(mode="markers+lines")
+
+        fig.update_layout(
+            xaxis_title="Zeit",
+            yaxis_title="Ergebnis",
+            legend_title="Ziel-Einheit",
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+    else:
+        st.info("Noch keine Daten für diese Kategorie vorhanden.")
 
 else:
     st.write("Keine Daten vorhanden")
