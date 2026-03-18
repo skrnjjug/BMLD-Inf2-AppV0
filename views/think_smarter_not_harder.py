@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import datetime
 import pytz
+import plotly.express as px
+
 from functions.rechner import (
     konvertiere_laenge,
     konvertiere_gewicht,
@@ -60,14 +62,14 @@ with st.container():
                 else:
                     ergebnis = konvertiere_temperatur(wert, von, nach)
 
-                st.success(f"✅ {wert} {von} = **{ergebnis} {nach}**")
+                st.success(f"✅ {wert} {von} = **{ergebnis} {nach}**")
 
                 # Spezieller Hinweis für Temperatur
                 if kategorie.startswith("🌡️") and 20 <= ergebnis <= 30:
                     st.balloons()
                     st.info("🍹 Aperol Spritz Wetter!")
 
-                # --- Dictionary erstellen ---
+                # --- Dictionary erstellen (KONSISTENT BENANNT) ---
                 result = {
                     "timestamp": datetime.datetime.now(pytz.timezone('Europe/Zurich')),
                     "wert": wert,
@@ -83,6 +85,7 @@ with st.container():
                     ignore_index=True
                 )
 
+                # --- Speichern ---
                 data_manager = DataManager()
                 data_manager.save_user_data(st.session_state['data_df'], 'data.csv')
 
@@ -94,16 +97,24 @@ st.markdown("---")
 st.caption("Erstellt mit Streamlit – einfach, schnell und hübsch 😊")
 st.dataframe(st.session_state['data_df'])
 
-import plotly.express as px
-
+# --- Plot ---
 df = st.session_state['data_df']
 
 if not df.empty:
-    einheit = df.iloc[-1]["Einheit"]  # ← DAS ist der Fix
+    # letzte verwendete Ziel-Einheit
+    einheit = df.iloc[-1]["nach"]
 
-    df_filtered = df[df["Einheit"] == einheit]
+    # nach Einheit filtern
+    df_filtered = df[df["nach"] == einheit]
 
-    fig = px.line(df_filtered, x="Datum", y="Wert", title=einheit)
+    fig = px.line(
+        df_filtered,
+        x="timestamp",
+        y="wert",
+        title=f"Verlauf in {einheit}"
+    )
+
     st.plotly_chart(fig)
+
 else:
     st.write("Keine Daten vorhanden")
